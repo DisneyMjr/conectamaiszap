@@ -50,8 +50,7 @@ const reducer = (state, action) => {
   if (action.type === "LOAD_SCHEDULES") {
     const schedules = action.payload;
     const newSchedules = [];
-    console.log("payload")
-    console.log(schedules)
+
     schedules.forEach((schedule) => {
       const scheduleIndex = state.findIndex((s) => s.id === schedule.id);
       if (scheduleIndex !== -1) {

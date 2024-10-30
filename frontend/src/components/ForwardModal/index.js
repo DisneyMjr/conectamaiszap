@@ -80,7 +80,7 @@ const ForwardModal = ({ open, onClose, contactId, message }) => {
 				}
 				const { data: contactList } = await api.get('/contacts/list');
 				let customList = contactList.map((c) => ({ id: c.id, name: c.name, number: c.number, isGroup: c.isGroup }));
-				//console.log("customList>>",customList)
+				
 				if (isArray(customList)) {
 					setContacts([{ id: "", name: "" }, ...customList]);
 				}

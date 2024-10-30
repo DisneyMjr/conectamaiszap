@@ -390,7 +390,8 @@ const downloadMedia = async (msg: proto.IWebMessageInfo, isImported: Date = null
     // Trate o erro de acordo com as suas necessidades
   }
 
-  let filename = msg.message?.documentMessage?.fileName || "";
+  let filename = msg.message?.documentMessage?.fileName ||
+  msg.message?.documentWithCaptionMessage?.message?.documentMessage.fileName || "";
 
   const mineType =
     msg.message?.imageMessage ||
@@ -1006,8 +1007,7 @@ const verifyQueue = async (
     //inicia integração dialogflow/n8n
     if (!msg.key.fromMe && !ticket.isGroup && queues[0].integrationId) {
 
-
-      const integrations = await ShowQueueIntegrationService(ticket.integrationId, companyId);
+      const integrations = await ShowQueueIntegrationService(queues[0].integrationId, companyId);
 
       await handleMessageIntegration(msg, wbot, companyId, integrations, ticket)
 

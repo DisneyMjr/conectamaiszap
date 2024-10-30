@@ -70,7 +70,7 @@ const reducer = (state, action) => {
   if (action.type === "DELETE_TAG") {
     const tagId = action.payload;
 
-    const tagIndex = state.findIndex((s) => s.id === tagId);
+    const tagIndex = state.findIndex((s) => s.id == tagId);
     if (tagIndex !== -1) {
       state.splice(tagIndex, 1);
     }
@@ -135,7 +135,7 @@ const Tags = () => {
       }
 
       if (data.action === "delete") {
-        dispatch({ type: "DELETE_TAGS", payload: +data.tagId });
+        dispatch({ type: "DELETE_TAGS", payload: data.tagId });
       }
     });
 

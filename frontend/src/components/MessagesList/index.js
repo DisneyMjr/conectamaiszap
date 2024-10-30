@@ -447,6 +447,7 @@ const MessagesList = ({
 
 
   const { user } = useContext(AuthContext);
+  const userQueueIds = user.queues.map((q) => q.id);
   const companyId = user.companyId;
 
   useEffect(() => {
@@ -483,9 +484,10 @@ const MessagesList = ({
     const delayDebounceFn = setTimeout(() => {
       const fetchMessages = async () => {
         if (ticketId === undefined) return;
+        const listQueueId = selectedQueuesMessage?.length > 0 ? selectedQueuesMessage : userQueueIds;
         try {
           const { data } = await api.get("/messages/" + ticketId, {
-            params: { pageNumber, selectedQueues: JSON.stringify(selectedQueuesMessage) },
+            params: { pageNumber, selectedQueues: JSON.stringify(listQueueId) },
           });
 
           if (currentTicketId.current === ticketId) {

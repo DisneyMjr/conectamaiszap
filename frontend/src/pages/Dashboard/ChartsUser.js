@@ -1,144 +1,161 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
 } from 'chart.js';
-import { Bar } from 'react-chartjs-2';
+import { Doughnut } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import brLocale from 'date-fns/locale/pt-BR';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { Button, Stack, TextField } from '@mui/material';
+import { Stack, TextField } from '@mui/material';
 import Typography from "@material-ui/core/Typography";
 import api from '../../services/api';
 import { format } from 'date-fns';
 import { toast } from 'react-toastify';
-import { makeStyles } from "@material-ui/core/styles";
-import './button.css';
-import { i18n } from '../../translate/i18n';
-import { AuthContext } from "../../context/Auth/AuthContext";
-
-const useStyles = makeStyles((theme) => ({
-    container: {
-        paddingTop: theme.spacing(1),
-        paddingBottom: theme.padding,
-        paddingLeft: theme.spacing(1),
-        paddingRight: theme.spacing(2),
-    }
-}));
+import Button from "@material-ui/core/Button";
 
 ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
-    ChartDataLabels
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ChartDataLabels
 );
 
 export const options = {
-    responsive: true,
-    plugins: {
-        legend: {
-            position: 'top',
-            display: false,
-        },
-        title: {
-            display: true,
-            text: 'Tickets',
-            position: 'left',
-        },
-        datalabels: {
-            display: true,
-            anchor: 'start',
-            offset: -30,
-            align: "start",
-            color: "#fff",
-            textStrokeColor: "#000",
-            textStrokeWidth: 2,
-            font: {
-                size: 20,
-                weight: "bold"
-
-            },
-        }
+  responsive: true,
+  plugins: {
+    legend: {
+      position: 'top',
+      display: false,
     },
+    title: {
+      display: true,
+      text: 'Tickets',
+      position: 'left',
+    },
+    datalabels: {
+      display: true,
+      anchor: 'start',
+      align: 'start',
+      color: '#fff',
+      textStrokeColor: '#000',
+      textStrokeWidth: 2,
+      font: {
+        size: 14,
+        weight: 'bold',
+      },
+    },
+  },
 };
 
-export const ChatsUser = () => {
-    const classes = useStyles();
-    const [initialDate, setInitialDate] = useState(new Date());
-    const [finalDate, setFinalDate] = useState(new Date());
-    const [ticketsData, setTicketsData] = useState({ data: [] });
-    const { user } = useContext(AuthContext);
+// Função para obter o último dia do mês
+const getLastDayOfMonth = (date) => {
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0);
+};
 
-    const companyId = user.companyId;
+// Função para obter o primeiro dia do mês
+const getFirstDayOfMonth = (date) => {
+  return new Date(date.getFullYear(), date.getMonth(), 1);
+};
 
-    useEffect(() => {
-        handleGetTicketsInformation();
-    }, []);
+export const ChartsUser = () => {
+  const [initialDate, setInitialDate] = useState(getFirstDayOfMonth(new Date()));
+  const [finalDate, setFinalDate] = useState(getLastDayOfMonth(new Date()));
+  const [ticketsData, setTicketsData] = useState({
+    data: [],
+  });
 
-    const dataCharts = {
+  useEffect(() => {
+    handleGetTicketsInformation();
+  }, [initialDate, finalDate]); // Conforme as datas mudem a função é chamada
 
-        labels: ticketsData && ticketsData?.data.length > 0 && ticketsData?.data.map((item) => item.nome),
-        datasets: [
-            {
-                data: ticketsData?.data.length > 0 && ticketsData?.data.map((item, index) => {
-                    return item.quantidade
-                }),
-                backgroundColor: '#065183',
-            },
+  const dataCharts = {
+    labels: ticketsData?.data?.length > 0 ? ticketsData.data.map((item) => item.nome) : [],
+    datasets: [
+      {
+        label: 'Dataset 1',
+        data: ticketsData?.data.length > 0 ? ticketsData.data.map((item) => item.quantidade) : [],
+        backgroundColor: [
+          '#1A4783', '#FF6737', '#FF0505', '#32a852', '#FFFF00', '#FFD700', '#DAA520',
+          '#FF8C00', '#808080', '#008B8B', '#008000', '#FFA500', '#9ACD32', '#228B22',
+          '#FFA500', '#2F4F4F', '#8B0000', '#C0C0C0', '#808000', '#363636', '#836FFF',
+          '#FFDAB9', '#FFA07A', '#7CFC00', '#B0E0E6', '#00FFFF', '#ff0000', '#FFFACD',
+          '#66CDAA', '#EEE8AA', '#8FBC8F', '#ADFF2F', '#F0E68C', '#008080'
+        ]
+      },
+    ],
+  };
 
-        ],
-    };
+  const options = {
+    plugins: {
+      datalabels: {
+        color: '#FFFFFF', // Cor dos números
+        font: {
+          weight: 'bold',
+          size: 10,
+        },
+      },
+      legend: {
+        labels: {
+          boxWidth: 10, // Largura dos retângulos dos labels
+          boxHeight: 10, // Altura dos retângulos dos labels (em Chart.js v4)
+        },
+      },
+    },
+  };
 
-    const handleGetTicketsInformation = async () => {
-        try {
-
-            const { data } = await api.get(`/dashboard/ticketsUsers?initialDate=${format(initialDate, 'yyyy-MM-dd')}&finalDate=${format(finalDate, 'yyyy-MM-dd')}&companyId=${companyId}`);
-            setTicketsData(data);
-        } catch (error) {
-            toast.error('Erro ao buscar informações dos tickets');
-        }
+  const handleGetTicketsInformation = async () => {
+    try {
+      const { data } = await api.get(`/dashboard/ticketsUsers?initialDate=${format(initialDate, 'yyyy-MM-dd')}&finalDate=${format(finalDate, 'yyyy-MM-dd')}`);
+      setTicketsData(data);
+    } catch (error) {
+      toast.error('Erro ao buscar informações dos tickets');
     }
+  }
 
-    return (
-        <>
-            <Typography component="h2" variant="h6" color="primary" gutterBottom>
-                {i18n.t("dashboard.users.totalCallsUser")}
-            </Typography>
+  return (
+    <>
+      <Typography component="h2" variant="h6" gutterBottom style={{ color: "#153969" }}>
+        Total de atendimentos por usuário
+      </Typography>
 
-            <Stack direction={'row'} spacing={2} alignItems={'center'} sx={{ my: 2, }} >
+      <Stack direction={'row'} spacing={2} alignItems={'center'} sx={{ my: 2 }} >
+        <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={brLocale}>
+          <DatePicker
+            value={initialDate}
+            onChange={(newValue) => setInitialDate(newValue)}
+            label="Data inicial"
+            renderInput={(params) => <TextField fullWidth {...params} sx={{ width: '20ch' }} />}
+          />
+        </LocalizationProvider>
 
-                <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={brLocale}>
-                    <DatePicker
-                        value={initialDate}
-                        onChange={(newValue) => { setInitialDate(newValue) }}
-                        label={i18n.t("dashboard.date.initialDate")}
-                        renderInput={(params) => <TextField fullWidth {...params} sx={{ width: '20ch' }} />}
+        <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={brLocale}>
+          <DatePicker
+            value={finalDate}
+            onChange={(newValue) => setFinalDate(newValue)}
+            label="Data final"
+            renderInput={(params) => <TextField fullWidth {...params} sx={{ width: '20ch' }} />}
+          />
+        </LocalizationProvider>
 
-                    />
-                </LocalizationProvider>
-
-                <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={brLocale}>
-                    <DatePicker
-                        value={finalDate}
-                        onChange={(newValue) => { setFinalDate(newValue) }}
-                        label={i18n.t("dashboard.date.finalDate")}
-                        renderInput={(params) => <TextField fullWidth {...params} sx={{ width: '20ch' }} />}
-                    />
-                </LocalizationProvider>
-
-                <Button className="buttonHover" onClick={handleGetTicketsInformation} variant='contained'>Filtrar</Button>
-
-            </Stack>
-            <Bar options={options} data={dataCharts} style={{ maxWidth: '100%', maxHeight: '280px', }} />
-        </>
-    );
+        {/* <Button
+          className="buttonHover"
+          onClick={handleGetTicketsInformation}
+          style={{ backgroundColor: "#1A4783", color: "white" }}
+        >
+          Filtrar
+        </Button> */}
+      </Stack>
+      <Doughnut options={options} data={dataCharts} plugins={[ChartDataLabels]} style={{ maxWidth: '100%', maxHeight: '280px' }} />
+    </>
+  );
 }

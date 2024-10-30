@@ -60,7 +60,7 @@ const Kanban = () => {
   const [tickets, setTickets] = useState([]);
   const { user } = useContext(AuthContext);
   const { profile, queues } = user;
-  const jsonString = user.queues.map(queue => queue.UserQueue.queueId);
+  const jsonString = user.queues.map(queue => queue?.UserQueue?.queueId);
 
   const fetchTickets = async (jsonString) => {
     try {
@@ -134,7 +134,6 @@ const Kanban = () => {
                 <button 
                   className={classes.button} 
                   onClick={() => {
-                    console.log(ticket.uuid)
                     handleCardClick(ticket.uuid)
                   }}>
                     Ver Ticket
@@ -154,7 +153,6 @@ const Kanban = () => {
   };
 
   const handleCardClick = (uuid) => {  
-    //console.log("Clicked on card with UUID:", uuid);
     history.push('/tickets/' + uuid);
   };
 

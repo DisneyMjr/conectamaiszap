@@ -446,12 +446,11 @@ const MessageInput = ({ ticketId, ticketStatus }) => {
   const handleOpenModalForward = () => {
 
     if (selectedMessages.length === 0) {
-      console.log('selectedMessages', selectedMessages)
       setForwardMessageModalOpen(false)
       toastError(i18n.t("messagesList.header.notMessage"));
       return;
     } else {
-      console.log('selectedMessages else', selectedMessages)
+
       setForwardMessageModalOpen(true);
 
     }
@@ -501,20 +500,21 @@ const MessageInput = ({ ticketId, ticketStatus }) => {
       setLoading(false);
       return;
     }
-    const formData = new FormData();
-    formData.append("fromMe", true);
-    medias.forEach((media) => {
-      formData.append("medias", media);
-      privateMessage
-        ? formData.append("body", `\u200d`)
-        : formData.append("body", "");
+    try {    
+      medias.forEach(async(media) => {
+        const formData = new FormData();
+        formData.append("fromMe", true);
+        formData.append("isPrivate", privateMessage);
+        formData.append("medias", media);
+        privateMessage ?
+          formData.append("body", `\u200d`)
+          :
+          formData.append("body", "")
+        await api.post(`/messages/${ticketId}`, formData);
     });
-
-    try {
-      await api.post(`/messages/${ticketId}`, formData);
-    } catch (err) {
-      toastError(err);
-    }
+  } catch (err) {
+    toastError(err);
+  }
 
     setLoading(false);
     setMedias([]);

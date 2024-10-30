@@ -86,7 +86,9 @@ const messages = {
           totalSentMessages: "Minhas Mensagens Enviadas Totais",
           averageServiceTime: "T.M. de Atendimento",
           averageWaitingTime: "T.M. de Espera",
-          status: "Status (Atual)"
+          status: "Status (Atual)",
+          chatsClosed: "Chats Encerrados",
+          dueDate:"Data de Vencimento"
         },
         users: {
           name: "Nome",

@@ -38,6 +38,7 @@ import apiContactRoutes from "./api/apiContactRoutes";
 import companySettingsRoutes from "./companySettingsRoutes";
 import passwordRoutes from "./passwordRoutes";
 import promptRoutes from "./promptRouter";
+import PlantaoRoutes from "./plantaoRoutes";
 
 const routes = Router();
 
@@ -79,6 +80,7 @@ routes.use(promptRoutes);
 routes.use("/api", apiCompanyRoutes);
 routes.use("/api", apiContactRoutes);
 routes.use(passwordRoutes);
+routes.use(PlantaoRoutes);
 
 routes.use(companySettingsRoutes)
 

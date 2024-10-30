@@ -3,6 +3,7 @@ import AppError from "../../errors/AppError";
 
 
 const ShowQueueIntegrationService = async (id: string | number, companyId: number): Promise<QueueIntegrations> => {
+
   const integration = await QueueIntegrations.findByPk(id);
 
   // if (Number(integration?.companyId) !== Number(companyId)) {

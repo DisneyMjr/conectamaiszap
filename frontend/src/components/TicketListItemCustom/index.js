@@ -243,6 +243,7 @@ const TicketListItemCustom = ({ ticket }) => {
     const { setCurrentTicket } = useContext(TicketsContext);
     const { user } = useContext(AuthContext);
 
+       
     const { get: getSetting } = useCompanySettings();
 
     useEffect(() => {
@@ -261,7 +262,7 @@ const TicketListItemCustom = ({ ticket }) => {
     }, []);
 
     const handleOpenAcceptTicketWithouSelectQueue = useCallback(() => {
-        // console.log(ticket)
+      
         setAcceptTicketWithouSelectQueueOpen(true);
     }, []);
 
@@ -481,7 +482,7 @@ const TicketListItemCustom = ({ ticket }) => {
                             height: "50px",
                             borderRadius: "50%",
                         }}
-                        src={`${ticket?.contact?.urlPicture}`}
+                        src={`${ticket?.contact?.profilePicUrl}`}
 
                     />
                 </ListItemAvatar>
@@ -527,7 +528,7 @@ const TicketListItemCustom = ({ ticket }) => {
                                 component="span"
                                 variant="body2"
                                 color="textSecondary"
-                            // style={console.log('ticket.lastMessage', ticket.lastMessage)}
+                         
                             >
                                 {["composing", "recording"].includes(ticket?.presence) ? (
                                     <span className={classes.presence}>

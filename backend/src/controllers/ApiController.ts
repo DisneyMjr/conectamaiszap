@@ -244,7 +244,7 @@ export const index = async (req: Request, res: Response): Promise<Response> => {
   }
 
   let user
-  if (userId.toString() !== "" && !isNaN(userId)) {
+  if (userId && userId.toString() !== "" && !isNaN(userId)) {
 
     console.log("entrou aqui no showuser")
     user = await ShowUserService(userId);
@@ -272,7 +272,7 @@ export const index = async (req: Request, res: Response): Promise<Response> => {
     await verifyMediaMessage(sentMessage, contactAndTicket, contactAndTicket.contact)
   } else {
     sentMessage = await SendWhatsAppMessageAPI({ body: bodyMessage, whatsappId: whatsapp.id, contact: contactAndTicket.contact, quotedMsg, msdelay });
-    
+
     await verifyMessage(sentMessage, contactAndTicket, contactAndTicket.contact)
   }
   console.log(closeTicket)
@@ -285,7 +285,7 @@ export const index = async (req: Request, res: Response): Promise<Response> => {
         ticketData: { status: "closed", sendFarewellMessage: false, amountUsedBotQueues: 0, lastMessage: body},
         companyId,
       });
-    }, 100);    
+    }, 100);
   }
 
   setTimeout(async () => {

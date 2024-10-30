@@ -32,6 +32,7 @@ import CampaignReport from "../pages/CampaignReport";
 import Annoucements from "../pages/Annoucements";
 import Chat from "../pages/Chat";
 import PasswordReset from "../pages/PasswordReset";
+import { Plantao } from "../pages/Plantao";
 
 // import Integrations from '../pages/Integrations';
 // import GoogleCalendarComponent from '../pages/Integrations/components/GoogleCalendarComponent';
@@ -82,6 +83,7 @@ const Routes = () => {
                 <Route exact path="/queue-integration" component={QueueIntegration} isPrivate />
                 <Route exact path="/announcements" component={Annoucements} isPrivate />
                 <Route exact path="/chats/:id?" component={Chat} isPrivate />
+                <Route exact path="/plantao" component={Plantao} isPrivate />
                 <Route exact path="/files" component={Files} isPrivate />
                 <Route exact path="/prompts" component={Prompts} isPrivate />
                 <Route exact path="/moments" component={ChatMoments} isPrivate />

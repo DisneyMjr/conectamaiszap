@@ -139,7 +139,7 @@ const useAuth = () => {
 
       if (before === true) {
         localStorage.setItem("token", JSON.stringify(data.token));
-        // localStorage.setItem("companyId", companyId);
+        localStorage.setItem("companyId", companyId);
         // localStorage.setItem("userId", id);
         localStorage.setItem("companyDueDate", vencimento);
         api.defaults.headers.Authorization = `Bearer ${data.token}`;

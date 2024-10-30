@@ -193,7 +193,6 @@ const UserModal = ({ open, onClose, userId }) => {
 		try {
 			if (userId) {
 				const { data } = await api.put(`/users/${userId}`, userData);
-				console.log(user, profileUrl, data)
 				window.localStorage.setItem("preferredTheme", values.defaultTheme);
 
 				if (user.profileImage && user.profileImage !== path.basename(profileUrl))

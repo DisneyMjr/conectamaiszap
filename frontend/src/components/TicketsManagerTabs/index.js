@@ -315,7 +315,6 @@ const TicketsManagerTabs = () => {
   };
 
   const handleFilter = () => {
-    console.log("entrou no filter")
     if (filter) {
       setFilter(false);
       setTab("open")
@@ -376,7 +375,7 @@ const TicketsManagerTabs = () => {
 
       {filter === true && (
         <>
-          {console.log("entrou no filtro aberto")}
+       
           <TagsFilter onFiltered={handleSelectedTags} />
           <WhatsappsFilter onFiltered={handleSelectedWhatsapps} />
           <StatusFilter onFiltered={handleSelectedStatus} />

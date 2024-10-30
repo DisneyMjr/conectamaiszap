@@ -31,6 +31,7 @@ import LocalAtmIcon from '@material-ui/icons/LocalAtm';
 import BusinessIcon from '@material-ui/icons/Business';
 import ViewListOutlinedIcon from "@material-ui/icons/ViewListOutlined"
 import { AddToQueueRounded, AttachFile, CalendarToday, DeviceHubOutlined, ExploreOutlined, Label, AllInclusive } from '@material-ui/icons';
+import { Ri24HoursFill } from "react-icons/ri";
 
 
 import Typography from "@material-ui/core/Typography";
@@ -285,11 +286,11 @@ const MainListItems = (props, { collapsed }) => {
         icon={<WhatsAppIcon />}
       />
 
-      { <ListItemLink
+      {<ListItemLink
         to="/moments"
         primary={i18n.t("mainDrawer.listItems.chatsTempoReal")}
         icon={<ViewListOutlinedIcon />}
-      /> }
+      />}
 
       <ListItemLink
         to="/quick-messages"
@@ -485,7 +486,7 @@ const MainListItems = (props, { collapsed }) => {
               icon={<AccountTreeOutlinedIcon />}
             />
 
-            {showOpenAi && ( 
+            {showOpenAi && (
               <>
                 <ListItemLink
                   to="/prompts"
@@ -493,9 +494,9 @@ const MainListItems = (props, { collapsed }) => {
                   icon={<AllInclusive />}
                 />
               </>
-            )} 
+            )}
 
-            { showIntegration && 
+            {showIntegration &&
               (<>
                 <ListItemLink
                   to="/queue-integration"
@@ -503,7 +504,7 @@ const MainListItems = (props, { collapsed }) => {
                   icon={<DeviceHubOutlined />}
                 />
               </>
-            )}
+              )}
 
             <ListItemLink
               to="/connections"
@@ -512,6 +513,16 @@ const MainListItems = (props, { collapsed }) => {
                 <Badge badgeContent={connectionWarning ? "!" : 0} color="error">
                   <SyncAltIcon />
                 </Badge>
+              }
+            />
+
+            <ListItemLink
+              to="/plantao"
+              primary={'Plantão'}
+              icon={
+
+                <Ri24HoursFill size={24} />
+
               }
             />
 

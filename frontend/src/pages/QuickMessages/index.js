@@ -36,12 +36,8 @@ import { AuthContext } from "../../context/Auth/AuthContext";
 
 const reducer = (state, action) => {
   if (action.type === "LOAD_QUICKMESSAGES") {
-    //console.log("aqui");
-    //console.log(action);
-    //console.log(action.payload);
     const quickmessages = action.payload;
     const newQuickmessages = [];
-    //console.log(newQuickmessages);
 
     if (isArray(quickmessages)) {
       quickmessages.forEach((quickemessage) => {
@@ -174,7 +170,6 @@ const Quickemessages = () => {
   };
 
   const handleEditQuickemessage = (quickemessage) => {
-    //console.log(quickemessage);
     setSelectedQuickemessage(quickemessage);
     setQuickMessageDialogOpen(true);
   };

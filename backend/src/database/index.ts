@@ -41,6 +41,7 @@ import ContactTag from "../models/ContactTag";
 import CompaniesSettings from "../models/CompaniesSettings";
 import LogTicket from "../models/LogTicket";
 import Prompt from "../models/Prompt";
+import Plantao from "../models/Plantao";
 
 // eslint-disable-next-line
 const dbConfig = require("../config/database");
@@ -91,6 +92,7 @@ const models = [
   CompaniesSettings,
   LogTicket,
   Prompt,
+  Plantao,
 ];
 
 sequelize.addModels(models);

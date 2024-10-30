@@ -13,6 +13,9 @@ import CompaniesSettings from "../../models/CompaniesSettings";
 import CreateLogTicketService from "./CreateLogTicketService";
 import AppError from "../../errors/AppError";
 
+import { NotifyPlantaoService } from "../PlantaoServices/NotifyPlantaoService";
+import Message from "../../models/Message";
+
 interface Response {
   ticket: Ticket;
   isCreated: boolean;
@@ -33,6 +36,8 @@ const FindOrCreateTicketService = async (
 ): Promise<Response> => {
   // try {
   let isCreated = false;
+
+  let notification = false;
 
   let openAsLGPD = false
   if (settings.enableLGPD) { //adicionar lgpdMessage
@@ -60,7 +65,7 @@ const FindOrCreateTicketService = async (
 
     if (!ticket.isGroup) {
       // @ts-ignore: Unreachable code error
-      if ((Number(ticket?.userId) !== Number(userId) && userId !== 0 && userId !== "") || (queueId !== 0 && Number(ticket?.queueId) !== Number(queueId) && queueId !== "")) {
+      if ( ticket?.userId && ((Number(ticket?.userId) !== Number(userId) && userId !== 0 && userId !== "") || (queueId !== 0 && Number(ticket?.queueId) !== Number(queueId) && queueId !== ""))) {
         throw new AppError(`Ticket em outro atendimento. ${"Atendente: " + ticket?.user?.name} - ${"Fila: " + ticket?.queue?.name}`);
       }
     }
@@ -71,9 +76,9 @@ const FindOrCreateTicketService = async (
   }
 
   const timeCreateNewTicket = whatsapp.timeCreateNewTicket;
-  
+
   if (!ticket) {
-    if (timeCreateNewTicket && timeCreateNewTicket !== 0 ) {
+    if (timeCreateNewTicket && timeCreateNewTicket !== 0) {
 
       ticket = await Ticket.findOne({
         where: {
@@ -143,6 +148,15 @@ const FindOrCreateTicketService = async (
 
   ticket = await ShowTicketService(ticket.id, companyId);
 
+  notification = ticket.status === 'pending' ? true : false;
+
+  const lastMessage = await Message.findOne({
+    where: {
+      ticketId: ticket.id
+    },
+    order: [["id", "DESC"]]
+  });
+
   await CreateLogTicketService({
     ticketId: ticket.id,
     type: openAsLGPD ? "lgpd" : "create"
@@ -157,6 +171,12 @@ const FindOrCreateTicketService = async (
         ticket
       });
   };
+
+  const fromMe = lastMessage?.fromMe || false;
+
+  if (new Date() >= ticket.nextNotify && notification && !fromMe) {
+    await NotifyPlantaoService({ companyId, ticket });
+  }
 
   return { ticket, isCreated };
   // } catch (err) {

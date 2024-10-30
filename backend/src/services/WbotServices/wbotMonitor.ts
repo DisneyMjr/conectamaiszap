@@ -96,12 +96,17 @@ const wbotMonitor = async (
 
 
 
-    // wbot.ev.on("contacts.upsert", async (contacts: BContact[]) => {
-    //   await createOrUpdateBaileysService({
-    //     whatsappId: whatsapp.id,
-    //     contacts,
-    //   });
-    // });
+    wbot.ev.on("contacts.upsert", async (contacts: BContact[]) => {
+
+      console.log("upsert", contacts);
+
+      await createOrUpdateBaileysService({
+        whatsappId: whatsapp.id,
+        contacts,
+      });
+    });
+
+    // captura os contatos do whatsapp
 
 
   } catch (err) {

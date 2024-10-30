@@ -172,6 +172,9 @@ class Ticket extends Model<Ticket> {
   @Default(false)
   @Column
   typebotStatus: boolean
+
+  @Column
+  nextNotify: Date;
 }
 
 export default Ticket;
