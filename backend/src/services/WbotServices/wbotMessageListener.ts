@@ -1007,7 +1007,8 @@ const verifyQueue = async (
     //inicia integração dialogflow/n8n
     if (!msg.key.fromMe && !ticket.isGroup && queues[0].integrationId) {
 
-      const integrations = await ShowQueueIntegrationService(queues[0].integrationId, companyId);
+
+      const integrations = await ShowQueueIntegrationService(ticket.integrationId, companyId);
 
       await handleMessageIntegration(msg, wbot, companyId, integrations, ticket)
 
