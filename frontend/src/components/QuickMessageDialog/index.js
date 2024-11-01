@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
-
+import path from "path";
 import * as Yup from "yup";
 import { Formik, Form, Field } from "formik";
 import { toast } from "react-toastify";
@@ -22,7 +22,6 @@ import api from "../../services/api";
 import toastError from "../../errors/toastError";
 import { AuthContext } from "../../context/Auth/AuthContext";
 import MessageVariablesPicker from "../MessageVariablesPicker";
-import ButtonWithSpinner from "../ButtonWithSpinner";
 
 import {
   FormControl,
@@ -32,8 +31,6 @@ import {
   Select,
 } from "@material-ui/core";
 import ConfirmationModal from "../ConfirmationModal";
-
-const path = require('path');
 
 const useStyles = makeStyles((theme) => ({
   root: {
