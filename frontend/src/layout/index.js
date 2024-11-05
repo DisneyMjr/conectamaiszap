@@ -58,14 +58,10 @@ const backendUrl = getBackendUrl();
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
+
   root: {
     display: "flex",
     height: "100vh",
-    [theme.breakpoints.down("sm")]: {
-      height: "100vh",
-      width: "100vw",
-      overflowX: "hidden"
-    },
     backgroundColor: theme.palette.fancyBackground,
     '& .MuiButton-outlinedPrimary': {
       color: theme.mode === 'light' ? '#065183' : '#FFF',
@@ -75,31 +71,14 @@ const useStyles = makeStyles((theme) => ({
       color: theme.mode === 'light' ? '#065183' : '#FFF',
     }
   },
-  avatar: {
-    width: "100%",
-  },
   toolbar: {
     paddingRight: 24,
     color: theme.palette.dark.main,
     background: theme.palette.barraSuperior,
     [theme.breakpoints.down("sm")]: {
-      width: "100vw",
       paddingLeft: 10,
       paddingRight: 10,
       minHeight: 56
-    }
-  },
-  toolbarIcon: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "flex-end",
-    backgroundColor: "#FFF",
-    backgroundSize: "cover",
-    padding: "0 8px",
-    minHeight: "48px",
-    [theme.breakpoints.down("sm")]: {
-      minHeight: "56px",
-      width: "100%"
     }
   },
   appBar: {
@@ -108,12 +87,6 @@ const useStyles = makeStyles((theme) => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    [theme.breakpoints.down("sm")]: {
-      position: "fixed",
-      width: "100vw",
-      marginLeft: 0,
-      zIndex: 9999
-    }
   },
   appBarShift: {
     marginLeft: drawerWidth,
@@ -123,31 +96,20 @@ const useStyles = makeStyles((theme) => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
     [theme.breakpoints.down("sm")]: {
-      position: "fixed",
-      width: "100vw",
-      marginLeft: 0
+      marginLeft: 0,
+      width: "100%"
     }
   },
   menuButton: {
     marginRight: 36,
     [theme.breakpoints.down("sm")]: {
-      display: "block",
       marginRight: 10
     }
   },
   menuButtonHidden: {
     display: "none",
     [theme.breakpoints.down("sm")]: {
-      display: "block",
-      marginRight: 10
-    }
-  },
-  title: {
-    flexGrow: 1,
-    fontSize: 14,
-    color: "white",
-    [theme.breakpoints.down("sm")]: {
-      fontSize: 13
+      display: "inline-flex" // Garante que o botão apareça no mobile mesmo quando o menu está aberto
     }
   },
   drawerPaper: {
@@ -159,10 +121,8 @@ const useStyles = makeStyles((theme) => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
     height: "100vh",
-    [theme.breakpoints.down("sm")]: {
-      position: "fixed",
-      width: drawerWidth,
-      height: "100%"
+    [theme.breakpoints.up("sm")]: {
+      position: "relative" // Volta para relative em desktop
     }
   },
   drawerPaperClose: {
@@ -180,21 +140,58 @@ const useStyles = makeStyles((theme) => ({
       display: "none"
     }
   },
+  content: {
+    flex: 1,
+    overflow: "auto",
+    [theme.breakpoints.down("sm")]: {
+      marginLeft: 0,
+      marginTop: 56,
+      width: "100%",
+      height: "calc(100% - 56px)",
+    },
+    [theme.breakpoints.up("sm")]: {
+      marginLeft: theme.spacing(9),
+    }
+  },
+
+
+
+  avatar: {
+    width: "100%",
+  },
+
+  toolbarIcon: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    backgroundColor: "#FFF",
+    backgroundSize: "cover",
+    padding: "0 8px",
+    minHeight: "48px",
+    [theme.breakpoints.down("sm")]: {
+      minHeight: "56px",
+      width: "100%"
+    }
+  },
+
+
+  title: {
+    flexGrow: 1,
+    fontSize: 14,
+    color: "white",
+    [theme.breakpoints.down("sm")]: {
+      fontSize: 13
+    }
+  },
+
+
   appBarSpacer: {
     minHeight: "48px",
     [theme.breakpoints.down("sm")]: {
       minHeight: "56px"
     }
   },
-  content: {
-    flex: 1,
-    overflow: "auto",
-    [theme.breakpoints.down("sm")]: {
-      marginTop: "56px",
-      height: "calc(100% - 56px)",
-      overflow: "auto"
-    }
-  },
+
   container: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
@@ -298,30 +295,15 @@ const LoggedInLayout = ({ children, themeToggle }) => {
 
   const mainListItems = useMemo(() => <MainListItems drawerOpen={drawerOpen} collapsed={!drawerOpen} />, [user, drawerOpen]);
 
-  const config = {
-    domain: '192.168.2.4',
-    uri: 'sip:202@192.168.2.4',
-    password: 'btelefonia12',
-    ws_servers: 'wss://202@192.168.2.4:8089/ws',
-    sockets: new WebSocketInterface('wss://192.168.2.4:8089/ws'),
-    display_name: '202',
-    websocket_url: 'wss://192.168.2.4:443',
-    sip_outbound_ur: 'udp://192.168.2.4:5060',
-    debug: true
-  };
-
-  const setConnectOnStartToLocalStorage = () => true;
-  const setNotifications = () => true;
-  const setCallVolume = () => true;
-  const setRingVolume = () => true;
-
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 600) {
+      const isMobileView = window.innerWidth < 600;
+      
+      if (isMobileView) {
         setDrawerVariant("temporary");
         setDrawerOpen(false);
       } else {
-        setDrawerVariant(user.defaultMenu === "closed" ? "permanent" : "permanent");
+        setDrawerVariant("permanent");
         setDrawerOpen(user.defaultMenu !== "closed");
       }
     };
@@ -456,7 +438,7 @@ const LoggedInLayout = ({ children, themeToggle }) => {
       </Drawer>
 
       <AppBar
-        position="fixed"
+        position={isMobile ? "fixed" : "absolute"}
         className={clsx(classes.appBar, drawerOpen && !isMobile && classes.appBarShift)}
       >
         <Toolbar variant={isMobile ? "regular" : "dense"} className={classes.toolbar}>
@@ -465,10 +447,7 @@ const LoggedInLayout = ({ children, themeToggle }) => {
             color="inherit"
             aria-label="open drawer"
             onClick={() => setDrawerOpen(!drawerOpen)}
-            className={clsx(
-              classes.menuButton,
-              drawerOpen && !isMobile && classes.menuButtonHidden
-            )}
+            className={clsx(classes.menuButton, !isMobile && drawerOpen && classes.menuButtonHidden)}
           >
             <MenuIcon style={{ color: "white" }} />
           </IconButton>
@@ -491,10 +470,13 @@ const LoggedInLayout = ({ children, themeToggle }) => {
             )}
           </Typography>
 
-          { <UserLanguageSelector /> }
+          {<UserLanguageSelector />}
 
           <IconButton edge="start" onClick={toggleColorMode}>
-            {theme.mode === 'dark' ? <Brightness7Icon style={{ color: "white" }} /> : <Brightness4Icon style={{ color: "white" }} />}
+            {theme.mode === 'dark' ? 
+              <Brightness7Icon style={{ color: "white" }} /> : 
+              <Brightness4Icon style={{ color: "white" }} />
+            }
           </IconButton>
 
           <NotificationsVolume
@@ -562,12 +544,14 @@ const LoggedInLayout = ({ children, themeToggle }) => {
         </Toolbar>
       </AppBar>
 
-      <main className={classes.content}>
+      <main className={clsx(classes.content, {
+        [classes.contentShift]: drawerOpen && !isMobile
+      })}>
         <div className={classes.appBarSpacer} />
         {children}
       </main>
     </div>
   );
-};
+}
 
 export default LoggedInLayout;
