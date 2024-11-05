@@ -87,6 +87,11 @@ const useStyles = makeStyles((theme) => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
+    [theme.breakpoints.down("sm")]: {
+      position: "fixed",
+      width: "100%",
+      zIndex: 1200 // Ajustado para um valor menor que o Menu
+    }
   },
   appBarShift: {
     marginLeft: drawerWidth,
@@ -183,7 +188,14 @@ const useStyles = makeStyles((theme) => ({
       fontSize: 13
     }
   },
-
+  userMenu: {
+    zIndex: 1300, // Garante que o menu fique acima da AppBar
+    [theme.breakpoints.down("sm")]: {
+      position: "fixed",
+      top: "56px", // Altura da AppBar no mobile
+      right: 0
+    }
+  },
 
   appBarSpacer: {
     minHeight: "48px",
@@ -532,6 +544,13 @@ const LoggedInLayout = ({ children, themeToggle }) => {
               }}
               open={menuOpen}
               onClose={handleCloseMenu}
+              className={classes.userMenu}
+              style={{ 
+                zIndex: 9999 
+              }}
+              PopoverClasses={{
+                root: classes.userMenu
+              }}
             >
               <MenuItem onClick={handleOpenUserModal}>
                 {i18n.t("mainDrawer.appBar.user.profile")}
