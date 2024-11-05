@@ -27,7 +27,7 @@ import {
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import AccountCircle from "@material-ui/icons/AccountCircle";
-import CachedIcon from "@material-ui/icons/CachedIcon";
+import Cached from "@material-ui/icons/Cached";
 import whatsappIcon from '../assets/nopicture.png';
 
 import MainListItems from "./MainListItems";
@@ -507,7 +507,7 @@ const LoggedInLayout = ({ children, themeToggle }) => {
             aria-label={i18n.t("mainDrawer.appBar.refresh")}
             color="inherit"
           >
-            <CachedIcon style={{ color: "white" }} />
+            <Cached style={{ color: "white" }} />
           </IconButton>
 
           {user.id && <NotificationsPopOver volume={volume} />}
