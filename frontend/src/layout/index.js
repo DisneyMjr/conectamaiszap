@@ -1,7 +1,6 @@
 import React, { useState, useContext, useEffect, useMemo } from "react";
 import clsx from "clsx";
 import moment from "moment";
-
 import { isNill } from "lodash"
 import SoftPhone from 'react-softphone'
 import { WebSocketInterface } from 'jssip';
@@ -28,8 +27,8 @@ import {
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import AccountCircle from "@material-ui/icons/AccountCircle";
-import CachedIcon from "@material-ui/icons/Cached";
-import whatsappIcon from '../assets/nopicture.png'
+import CachedIcon from "@material-ui/icons/CachedIcon";
+import whatsappIcon from '../assets/nopicture.png';
 
 import MainListItems from "./MainListItems";
 import NotificationsPopOver from "../components/NotificationsPopOver";
@@ -63,7 +62,9 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     height: "100vh",
     [theme.breakpoints.down("sm")]: {
-      height: "calc(100vh - 56px)",
+      height: "100vh",
+      width: "100vw",
+      overflowX: "hidden"
     },
     backgroundColor: theme.palette.fancyBackground,
     '& .MuiButton-outlinedPrimary': {
@@ -78,9 +79,15 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
   },
   toolbar: {
-    paddingRight: 24, // keep right padding when drawer closed
+    paddingRight: 24,
     color: theme.palette.dark.main,
     background: theme.palette.barraSuperior,
+    [theme.breakpoints.down("sm")]: {
+      width: "100vw",
+      paddingLeft: 10,
+      paddingRight: 10,
+      minHeight: 56
+    }
   },
   toolbarIcon: {
     display: "flex",
@@ -91,7 +98,8 @@ const useStyles = makeStyles((theme) => ({
     padding: "0 8px",
     minHeight: "48px",
     [theme.breakpoints.down("sm")]: {
-      height: "48px"
+      minHeight: "56px",
+      width: "100%"
     }
   },
   appBar: {
@@ -100,6 +108,12 @@ const useStyles = makeStyles((theme) => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
+    [theme.breakpoints.down("sm")]: {
+      position: "fixed",
+      width: "100vw",
+      marginLeft: 0,
+      zIndex: 9999
+    }
   },
   appBarShift: {
     marginLeft: drawerWidth,
@@ -109,30 +123,48 @@ const useStyles = makeStyles((theme) => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
     [theme.breakpoints.down("sm")]: {
-      display: "none"
+      position: "fixed",
+      width: "100vw",
+      marginLeft: 0
     }
   },
   menuButton: {
     marginRight: 36,
+    [theme.breakpoints.down("sm")]: {
+      display: "block",
+      marginRight: 10
+    }
   },
   menuButtonHidden: {
     display: "none",
+    [theme.breakpoints.down("sm")]: {
+      display: "block",
+      marginRight: 10
+    }
   },
   title: {
     flexGrow: 1,
     fontSize: 14,
     color: "white",
+    [theme.breakpoints.down("sm")]: {
+      fontSize: 13
+    }
   },
   drawerPaper: {
-    position: "relative",
+    position: "fixed",
     whiteSpace: "nowrap",
     width: drawerWidth,
     transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
+    height: "100vh",
+    [theme.breakpoints.down("sm")]: {
+      position: "fixed",
+      width: drawerWidth,
+      height: "100%"
+    }
   },
-
   drawerPaperClose: {
     overflowX: "hidden",
     transition: theme.transitions.create("width", {
@@ -143,15 +175,25 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up("sm")]: {
       width: theme.spacing(9),
     },
+    [theme.breakpoints.down("sm")]: {
+      width: 0,
+      display: "none"
+    }
   },
-
   appBarSpacer: {
     minHeight: "48px",
+    [theme.breakpoints.down("sm")]: {
+      minHeight: "56px"
+    }
   },
   content: {
     flex: 1,
     overflow: "auto",
-
+    [theme.breakpoints.down("sm")]: {
+      marginTop: "56px",
+      height: "calc(100% - 56px)",
+      overflow: "auto"
+    }
   },
   container: {
     paddingTop: theme.spacing(4),
@@ -177,9 +219,8 @@ const useStyles = makeStyles((theme) => ({
     height: "48px",
     maxWidth: 180,
     [theme.breakpoints.down("sm")]: {
-      width: "auto",
-      height: "100%",
-      maxWidth: 180,
+      height: "40px",
+      margin: "8px 0"
     },
     logo: theme.logo
   },
@@ -243,96 +284,52 @@ const LoggedInLayout = ({ children, themeToggle }) => {
   const { handleLogout, loading } = useContext(AuthContext);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerVariant, setDrawerVariant] = useState("permanent");
-  // const [dueDate, setDueDate] = useState("");
   const { user } = useContext(AuthContext);
 
   const theme = useTheme();
   const { colorMode } = useContext(ColorModeContext);
   const greaterThenSm = useMediaQuery(theme.breakpoints.up("sm"));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [volume, setVolume] = useState(localStorage.getItem("volume") || 1);
 
   const { dateToClient } = useDate();
   const [profileUrl, setProfileUrl] = useState(null);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const mainListItems = useMemo(() => <MainListItems drawerOpen={drawerOpen}  collapsed={!drawerOpen} />, [user, drawerOpen])
+  const mainListItems = useMemo(() => <MainListItems drawerOpen={drawerOpen} collapsed={!drawerOpen} />, [user, drawerOpen]);
 
   const config = {
-    domain: '192.168.2.4', // sip-server@your-domain.io
-    uri: 'sip:202@192.168.2.4', // sip:sip-user@your-domain.io
-    password: 'btelefonia12', //  PASSWORD ,
-    ws_servers: 'wss://202@192.168.2.4:8089/ws', //ws server
+    domain: '192.168.2.4',
+    uri: 'sip:202@192.168.2.4',
+    password: 'btelefonia12',
+    ws_servers: 'wss://202@192.168.2.4:8089/ws',
     sockets: new WebSocketInterface('wss://192.168.2.4:8089/ws'),
-    display_name: '202',//jssip Display Name
+    display_name: '202',
     websocket_url: 'wss://192.168.2.4:443',
     sip_outbound_ur: 'udp://192.168.2.4:5060',
-    debug: true // Turn debug messages on
-
+    debug: true
   };
-  const setConnectOnStartToLocalStorage = (newValue) => {
-    // Handle save the auto connect value to local storage
-    return true
-  }
-  const setNotifications = (newValue) => {
-    // Handle save the Show notifications of an incoming call to local storage
-    return true
-  }
-  const setCallVolume = (newValue) => {
-    // Handle save the call Volume value to local storage
-    return true
-  }
-  const setRingVolume = (newValue) => {
-    // Handle save the Ring Volume value to local storage
-    return true
-  }
-  //################### CODIGOS DE TESTE #########################################
-  // useEffect(() => {
-  //   navigator.getBattery().then((battery) => {
-  //     console.log(`Battery Charging: ${battery.charging}`);
-  //     console.log(`Battery Level: ${battery.level * 100}%`);
-  //     console.log(`Charging Time: ${battery.chargingTime}`);
-  //     console.log(`Discharging Time: ${battery.dischargingTime}`);
-  //   })
-  // }, []);
 
-  // useEffect(() => {
-  //   const geoLocation = navigator.geolocation
+  const setConnectOnStartToLocalStorage = () => true;
+  const setNotifications = () => true;
+  const setCallVolume = () => true;
+  const setRingVolume = () => true;
 
-  //   geoLocation.getCurrentPosition((position) => {
-  //     let lat = position.coords.latitude;
-  //     let long = position.coords.longitude;
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 600) {
+        setDrawerVariant("temporary");
+        setDrawerOpen(false);
+      } else {
+        setDrawerVariant(user.defaultMenu === "closed" ? "permanent" : "permanent");
+        setDrawerOpen(user.defaultMenu !== "closed");
+      }
+    };
 
-  //     console.log('latitude: ', lat)
-  //     console.log('longitude: ', long)
-  //   })
-  // }, []);
-
-  // useEffect(() => {
-  //   const nucleos = window.navigator.hardwareConcurrency;
-
-  //   console.log('Nucleos: ', nucleos)
-  // }, []);
-
-  // useEffect(() => {
-  //   console.log('userAgent', navigator.userAgent)
-  //   if (
-  //     navigator.userAgent.match(/Android/i)
-  //     || navigator.userAgent.match(/webOS/i)
-  //     || navigator.userAgent.match(/iPhone/i)
-  //     || navigator.userAgent.match(/iPad/i)
-  //     || navigator.userAgent.match(/iPod/i)
-  //     || navigator.userAgent.match(/BlackBerry/i)
-  //     || navigator.userAgent.match(/Windows Phone/i)
-  //   ) {
-  //     console.log('é mobile ', true) //celular
-  //   }
-  //   else {
-  //     console.log('não é mobile: ', false) //nao é celular
-  //   }
-  // }, []);
-  //##############################################################################
-
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [user]);
 
   useEffect(() => {
     if (document.body.offsetWidth > 600) {
@@ -374,7 +371,6 @@ const LoggedInLayout = ({ children, themeToggle }) => {
           window.location.reload();
         }, 1000);
       }
-
     });
 
     socket.emit("userStatus");
@@ -386,7 +382,6 @@ const LoggedInLayout = ({ children, themeToggle }) => {
       socket.disconnect();
       clearInterval(interval);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const handleMenu = (event) => {
@@ -411,14 +406,14 @@ const LoggedInLayout = ({ children, themeToggle }) => {
   };
 
   const drawerClose = () => {
-    if (document.body.offsetWidth < 600 || user.defaultMenu === "closed") {
+    if (isMobile || user.defaultMenu === "closed") {
       setDrawerOpen(false);
     }
   };
 
   const handleRefreshPage = () => {
     window.location.reload(false);
-  }
+  };
 
   const handleMenuItemClick = () => {
     const { innerWidth: width } = window;
@@ -429,7 +424,7 @@ const LoggedInLayout = ({ children, themeToggle }) => {
 
   const toggleColorMode = () => {
     colorMode.toggleColorMode();
-  }
+  };
 
   if (loading) {
     return <BackdropLoading />;
@@ -438,8 +433,7 @@ const LoggedInLayout = ({ children, themeToggle }) => {
   return (
     <div className={classes.root}>
       <Drawer
-        variant={drawerVariant}
-        className={drawerOpen ? classes.drawerPaper : classes.drawerPaperClose}
+        variant={isMobile ? "temporary" : drawerVariant}
         classes={{
           paper: clsx(
             classes.drawerPaper,
@@ -447,38 +441,36 @@ const LoggedInLayout = ({ children, themeToggle }) => {
           ),
         }}
         open={drawerOpen}
+        onClose={() => isMobile && setDrawerOpen(false)}
       >
         <div className={classes.toolbarIcon}>
-          <img src={logo} style={{ display: "block", margin: "0 auto", height: "50px", width: "100%" }} alt="logo" />
+          <img src={logo} style={{ display: "block", margin: "0 auto", height: "100%", width: "auto", maxWidth: "100%" }} alt="logo" />
           <IconButton onClick={() => setDrawerOpen(!drawerOpen)}>
             <ChevronLeftIcon />
           </IconButton>
         </div>
         <List className={classes.containerWithScroll}>
           {mainListItems}
-          {/* <MainListItems drawerClose={drawerClose} collapsed={!drawerOpen} /> */}
         </List>
         <Divider />
       </Drawer>
 
       <AppBar
-        position="absolute"
-        className={clsx(classes.appBar, drawerOpen && classes.appBarShift)}
-        color="primary"
+        position="fixed"
+        className={clsx(classes.appBar, drawerOpen && !isMobile && classes.appBarShift)}
       >
-        <Toolbar variant="dense" className={classes.toolbar}>
+        <Toolbar variant={isMobile ? "regular" : "dense"} className={classes.toolbar}>
           <IconButton
             edge="start"
-            variant="contained"
+            color="inherit"
             aria-label="open drawer"
-            style={{ color: "white" }}
             onClick={() => setDrawerOpen(!drawerOpen)}
             className={clsx(
               classes.menuButton,
-              drawerOpen && classes.menuButtonHidden
+              drawerOpen && !isMobile && classes.menuButtonHidden
             )}
           >
-            <MenuIcon />
+            <MenuIcon style={{ color: "white" }} />
           </IconButton>
 
           <Typography
@@ -488,7 +480,6 @@ const LoggedInLayout = ({ children, themeToggle }) => {
             noWrap
             className={classes.title}
           >
-            {/* {greaterThenSm && user?.profile === "admin" && getDateAndDifDays(user?.company?.dueDate).difData < 7 ? ( */}
             {greaterThenSm && user?.profile === "admin" && user?.company?.dueDate ? (
               <>
                 {i18n.t("mainDrawer.appBar.user.message")} <b>{user.name}</b>, {i18n.t("mainDrawer.appBar.user.messageEnd")} <b>{user?.company?.name}</b>! ({i18n.t("mainDrawer.appBar.user.active")} {dateToClient(user?.company?.dueDate)})
@@ -500,20 +491,8 @@ const LoggedInLayout = ({ children, themeToggle }) => {
             )}
           </Typography>
 
-          {/* DESABILITADO POIS TEM BUGS */}
           { <UserLanguageSelector /> }
-          {/* <SoftPhone
-            callVolume={33} //Set Default callVolume
-            ringVolume={44} //Set Default ringVolume
-            connectOnStart={false} //Auto connect to sip
-            notifications={false} //Show Browser Notification of an incoming call
-            config={config} //Voip config
-            setConnectOnStartToLocalStorage={setConnectOnStartToLocalStorage} // Callback function
-            setNotifications={setNotifications} // Callback function
-            setCallVolume={setCallVolume} // Callback function
-            setRingVolume={setRingVolume} // Callback function
-            timelocale={'UTC-3'} //Set time local for call history
-          /> */}
+
           <IconButton edge="start" onClick={toggleColorMode}>
             {theme.mode === 'dark' ? <Brightness7Icon style={{ color: "white" }} /> : <Brightness4Icon style={{ color: "white" }} />}
           </IconButton>
@@ -530,8 +509,6 @@ const LoggedInLayout = ({ children, themeToggle }) => {
           >
             <CachedIcon style={{ color: "white" }} />
           </IconButton>
-
-          {/* <DarkMode themeToggle={themeToggle} /> */}
 
           {user.id && <NotificationsPopOver volume={volume} />}
 
@@ -582,13 +559,12 @@ const LoggedInLayout = ({ children, themeToggle }) => {
               </MenuItem>
             </Menu>
           </div>
-
         </Toolbar>
       </AppBar>
+
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
-
-        {children ? children : null}
+        {children}
       </main>
     </div>
   );
